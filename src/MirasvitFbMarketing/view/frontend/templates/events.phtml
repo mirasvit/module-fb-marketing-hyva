@@ -1,0 +1,76 @@
+<?php
+/** @var \Mirasvit\FbMarketing\Block\Render $block */
+
+use Mirasvit\Core\Service\SerializeService;
+
+$data = $block->getDataLayerData();
+
+?>
+<script>
+    alert();
+    window.dataLayer = window.dataLayer || [];
+    window.mstFbMarketingProducts = window.mstFbMarketingProducts || [];
+
+    function mstFbItemPush(item) {
+        alert(item.analytics_type);
+        var fbMarketingStorageKey = '';
+        if (typeof item.analytics_type != 'undefined') {
+            fbMarketingStorageKey = fbMarketingStorageKey + item.analytics_type + '_';
+        }
+
+        if (typeof item.eventID != 'undefined') {
+            fbMarketingStorageKey = fbMarketingStorageKey + item.eventID;
+        }
+
+        if (typeof item.gtm_id != 'undefined') {
+            window.dataLayer.push({ecommerce: null});
+
+            if (typeof item.analytics_type != 'undefined' && item.analytics_type == 'ga3') {
+                window.dataLayer.push(item);
+            } else if (typeof item.analytics_type != 'undefined' && item.analytics_type == 'fbpixel') {
+                if (typeof fbq != 'undefined') {
+                    fbq(item[0], item[1], item[2]);
+                }
+            } else {
+                if (typeof gtag != 'undefined') {
+                    gtag(item[0], item[1], item[2]);
+                } else {
+                    if (typeof item[0] != 'undefined') {
+                        var formatedObj = {};
+                        formatedObj[item[0]] = item[1];
+                        formatedObj['ecommerce'] = item[2];
+
+                        window.dataLayer.push(formatedObj);
+                    } else {
+                        window.dataLayer.push(item);
+                    }
+                }
+            }
+        } else if (typeof item.event != 'undefined') {
+            window.dataLayer.push(item);
+        }
+    }
+
+    <?php foreach ($data as $item): ?>
+    mstFbItemPush(<?= SerializeService::encode($item); ?>);
+    <?php endforeach ?>
+
+    window.mstFbMarketingProducts = <?= SerializeService::encode($block->getDataLayerProducts()); ?>;
+
+    // clear section storage data
+    const browserStorage = hyva.getBrowserStorage();
+    const oldSectionData = JSON.parse(browserStorage.getItem('mage-cache-storage') || '{}') || {};
+
+    if (oldSectionData && typeof oldSectionData['gtm'] != 'undefined') {
+        delete oldSectionData['gtm'];
+    }
+    const privateContentEvent = new CustomEvent("private-content-loaded", {
+        detail: {
+            data: oldSectionData
+        }
+    });
+
+    window.dispatchEvent(privateContentEvent);
+
+    browserStorage.setItem('mage-cache-storage', JSON.stringify(oldSectionData));
+</script>
