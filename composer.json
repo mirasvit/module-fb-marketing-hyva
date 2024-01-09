@@ -2,7 +2,7 @@
     "name": "mirasvit/module-fb-marketing-hyva",
     "description": "Facebook Pixel & Converion API - Hyva",
     "type": "magento2-module",
-    "version": "1.0.0",
+    "version": "0.0.1",
     "require": {
         "magento/framework": "*",
         "hyva-themes/magento2-compat-module-fallback": "*",
