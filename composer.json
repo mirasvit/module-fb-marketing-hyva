@@ -6,8 +6,7 @@
     "require": {
         "magento/framework": "*",
         "hyva-themes/magento2-compat-module-fallback": "*",
-        "mirasvit/module-fb-marketing": "*",
-        "magewirephp/magewire": "*"
+        "mirasvit/module-fb-marketing": "*"
     },
     "license": [
         "proprietary"

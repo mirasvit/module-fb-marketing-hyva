@@ -1,34 +1,49 @@
-<div x-data="initGtmToolbar()" @private-content-loaded.window="initToolbar()"></div>
+<div x-data="initFbToolbar()" @private-content-loaded.window="initToolbar()"></div>
 <style>
-    .mst-gtm__toolbar, .mst-gtm__toolbar-extra {
+    .mst_fb_marketing__toolbar, .mst_fb__toolbar-extra {
+        position: fixed;
+        bottom: 1rem;
+        left: 1rem;
+        font-size: 1rem;
         outline: 5px solid rgba(74, 69, 66, 0.3);
+        border-radius: 0;
         z-index: 1000000;
+        width: fit-content;
     }
-    .mst-gtm__toolbar .mst-gtm__toolbar-body {
+    .mst_fb_marketing__toolbar .mst_fb__toolbar-body {
         max-height: 40rem;
     }
-    .mst-gtm__toolbar-extra {
-        left: 22rem;
+    .mst_fb_marketing__toolbar-extra {
+        position: fixed;
+        bottom: 1rem;
+        left: 22.3rem;
+        font-size: 0.9rem;
+        outline: 5px solid rgba(74, 69, 66, 0.3);
+        border-radius: 0;
+        z-index: 1000001;
+        width: fit-content;
+        background: #ffffff;
+        padding: 1rem;
     }
-    .mst-gtm__toolbar-extra pre {
+    .mst_fb_marketing__toolbar-extra pre {
         width: 35rem;
         height: 25rem;
     }
 </style>
 
 <script>
-    function initGtmToolbar() {
+    function initFbToolbar() {
         return {
-            cookieName: 'mst_gtm_debug',
-            debugOn:    'gtm',
+            cookieName: 'mst_fb_marketing_debug',
+            debugOn:    'fbq',
 
-            wrapperClassList: 'mst-gtm__toolbar fixed left-4 bottom-4 card p-0 rounded-none text-sm w-80',
+            wrapperClassList: 'mst_fb_marketing__toolbar',
             titleClassList:   'btn btn-primary rounded-none text-center block font-semibold',
-            bodyClassList:    'mst-gtm__toolbar-body overflow-y-auto',
-            eventClassList:   'mst-gtm__toolbar-event card m-2 p-2 border-grey-200 border-2 relative cursor-pointer',
+            bodyClassList:    'mst_fb_marketing__toolbar-body overflow-y-auto',
+            eventClassList:   'mst_fb_marketing__toolbar-track card m-2 p-2 border-grey-200 border-2 relative cursor-pointer',
             idxClassList:     'bg-blue-600 px-2 py-1 mr-3 text-white font-normal',
-            linkClassList:    'float-right text-gray-400 mr-2 underline',
-            extraClassList:   'mst-gtm__toolbar-extra fixed bottom-4 card rounded-none text-xs',
+            linkClassList:    'float-right text-sm text-gray-400 mr-2 underline ml-2',
+            extraClassList:   'mst_fb_marketing__toolbar-extra',
             preClassList:     'overflow-auto p-2 whitespace-pre-wrap leading-5',
 
             initToolbar: function () {
@@ -43,21 +58,27 @@
                 }
 
                 if (hyva.getCookie(this.cookieName) === this.debugOn) {
-                    const elements = document.getElementsByClassName('mst-gtm__toolbar')
+                    const elements = document.getElementsByClassName('mst_fb_marketing__toolbar')
+
+
                     while(elements.length > 0){
                         elements[0].parentNode.removeChild(elements[0]);
                     }
 
                     document.body.appendChild(this.getWrapperHtml());
 
-                    this.$toolbarBody = document.querySelector('.mst-gtm__toolbar-body');
+                    this.$toolbarBody = document.querySelector('.mst_fb_marketing__toolbar-body');
 
                     let len = 0;
+
                     setInterval(function () {
+
                         if (window.dataLayer.length !== len) {
+
                             this.updateToolbar();
 
                             len = window.dataLayer.length
+
                         }
                     }.bind(this), 1000);
                 }
@@ -69,7 +90,8 @@
                 let index = 1;
 
                 window.dataLayer.forEach(function (data) {
-                    if (typeof data.event != 'undefined') {
+
+                    if (data[0] == 'track') {
                         const $displayData = this.createToolbarElement('pre', false, this.preClassList);
                         const $code        = this.createToolbarElement('code', JSON.stringify(data, undefined, 4));
 
@@ -78,13 +100,12 @@
                         const $event = this.createToolbarElement('div', false, this.eventClassList);
 
                         $event.appendChild(this.createToolbarElement('strong', '#' + index, this.idxClassList));
-                        $event.appendChild(this.createToolbarElement('span', 'Event: ' + data.event));
-                        $event.appendChild(this.createToolbarElement('span', 'Open', this.linkClassList));
+                        $event.appendChild(this.createToolbarElement('span', 'Event: ' + data[1]));
+                        $event.appendChild(this.createToolbarElement('span', 'details', this.linkClassList));
 
                         $event.addEventListener('click', function () {
                             this.displayData($displayData)
                         }.bind(this));
-
                         this.$toolbarBody.appendChild($event);
 
                         index++
@@ -94,7 +115,7 @@
 
             getWrapperHtml: function () {
                 const $wrapper = this.createToolbarElement('div', false, this.wrapperClassList);
-                const $title   = this.createToolbarElement('strong', 'Google Tag Manager', this.titleClassList);
+                const $title   = this.createToolbarElement('strong', 'Facebook Marketing', this.titleClassList);
                 const $body    = this.createToolbarElement('div', false, this.bodyClassList);
 
                 $wrapper.appendChild($title);
@@ -104,7 +125,7 @@
             },
 
             displayData: function ($data) {
-                const toolbarExtra = document.querySelector('body .mst-gtm__toolbar-extra');
+                const toolbarExtra = document.querySelector('body .mst_fb_marketing__toolbar-extra');
 
                 if (toolbarExtra) {
                     toolbarExtra.parentNode.removeChild(toolbarExtra);
