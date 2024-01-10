@@ -1,0 +1,51 @@
+<?php
+/** @var \Mirasvit\FbMarketing\Block\Render $block */
+
+use Mirasvit\Core\Service\SerializeService;
+
+$data = $block->getDataLayerData();
+?>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    window.mstFbMarketingProducts = window.mstFbMarketingProducts || [];
+
+    function mstFbItemPush(item) {
+        var fbMarketingStorageKey = '';
+        if (typeof item.analytics_type != 'undefined') {
+            fbMarketingStorageKey = fbMarketingStorageKey + item.analytics_type + '_';
+        }
+
+        if (typeof item.eventID != 'undefined') {
+            fbMarketingStorageKey = fbMarketingStorageKey + item.eventID;
+        }
+
+        if (typeof fbq != 'undefined' && typeof item.eventID != 'undefined' && item.analytics_type == 'fbpixel') {
+            fbq(item[0], item[1], item[2], {eventID: item.eventID});
+
+            window.dataLayer.push(item);
+        }
+    }
+
+    <?php foreach ($data as $item): ?>
+    mstFbItemPush(<?= SerializeService::encode($item); ?>);
+    <?php endforeach ?>
+
+    window.mstFbMarketingProducts = <?= SerializeService::encode($block->getDataLayerProducts()); ?>;
+
+    // clear section storage data
+    const browserStorage = hyva.getBrowserStorage();
+    const oldSectionData = JSON.parse(browserStorage.getItem('mage-cache-storage') || '{}') || {};
+
+    if (oldSectionData && typeof oldSectionData['fbq'] != 'undefined') {
+        delete oldSectionData['fbq'];
+    }
+    const privateContentEvent = new CustomEvent("private-content-loaded", {
+        detail: {
+            data: oldSectionData
+        }
+    });
+
+    window.dispatchEvent(privateContentEvent);
+
+    browserStorage.setItem('mage-cache-storage', JSON.stringify(oldSectionData));
+</script>
