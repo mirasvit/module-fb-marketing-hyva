@@ -1,0 +1,19 @@
+<div x-data="initFbMstAddToCart()" @private-content-loaded.window="initialize($event.detail.data)"></div>
+
+<script>
+    function initFbMstAddToCart() {
+        return {
+            initialize: function (data) {
+                if (data["mst-tm-addtocart"]) {
+                    const fbq = data["mst-tm-addtocart"]
+                    this.onUpdate(fbq)
+                }
+            },
+
+            onUpdate: function (data) {
+                data.push.forEach(item => mstFbItemPush(item))
+            }
+        }
+    }
+</script>
+

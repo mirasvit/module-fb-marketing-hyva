@@ -2,13 +2,13 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceContainer name="mst_gtm.body_end">
-<!--            <block-->
-<!--                name="mst_fb_marketing.addtocart-hyva.js"-->
-<!--                class="Magento\Framework\View\Element\Template"-->
-<!--                template="Hyva_MirasvitFbMarketing::js/event/addtocart.phtml"-->
-<!--                after="-"-->
-<!--                ifconfig="mst_fbmarketing/facebook_pixel/is_enabled"-->
-<!--            />-->
+            <block
+                name="mst_fb_marketing.addtocart-hyva.js"
+                class="Magento\Framework\View\Element\Template"
+                template="Hyva_MirasvitFbMarketing::js/event/addtocart.phtml"
+                after="-"
+                ifconfig="mst_fbmarketing/facebook_pixel/is_enabled"
+            />
             <block
                 name="mst_fb_marketing.toolbar-hyva.js"
                 class="Magento\Framework\View\Element\Template"
