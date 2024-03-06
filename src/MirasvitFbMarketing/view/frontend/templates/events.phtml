@@ -1,8 +1,5 @@
 <?php
 /** @var \Mirasvit\FbMarketing\Block\Render $block */
-/** @var \Magento\Framework\Escaper $escaper */
-
-use Magento\Framework\Escaper;
 use Mirasvit\Core\Service\SerializeService;
 
 $data = $block->getDataLayerData();
@@ -29,10 +26,10 @@ $data = $block->getDataLayerData();
     }
 
     <?php foreach ($data as $item): ?>
-    mstFbItemPush(<?= $escaper->escapeHtml(SerializeService::encode($item)); ?>);
+    mstFbItemPush(<?= /* @noEscape */ SerializeService::encode($item); ?>);
     <?php endforeach ?>
 
-    window.mstFbMarketingProducts = <?= $escaper->escapeHtml(SerializeService::encode($block->getDataLayerProducts())); ?>;
+    window.mstFbMarketingProducts = <?= /* @noEscape */ SerializeService::encode($block->getDataLayerProducts()); ?>;
 
     // clear section storage data
     const browserStorage = hyva.getBrowserStorage();
